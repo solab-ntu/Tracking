@@ -1,0 +1,17 @@
+global_costmap:
+  global_frame: map
+  robot_base_frame: robot_0/base_link
+  update_frequency: 3.0
+  publish_frequency: 3.001  # actually exactly 5.0Hz, see https://github.com/ros-planning/navigation/issues/383
+  static_map: true
+ 
+  transform_tolerance: 0.5
+  plugins:
+    - {name: static_layer,            type: "costmap_2d::StaticLayer"}
+    - {name: staticobstacle_layer,      type: "costmap_2d::SmartobstacleLayer"}
+    - {name: inflation_layer,         type: "costmap_2d::InflationLayer"}
+    # - {name: predict_layer,       type: "new_layers::PredictLayer"}
+
+
+
+

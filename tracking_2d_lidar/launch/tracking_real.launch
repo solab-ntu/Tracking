@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="tracking" pkg="tracking_2d_lidar" type="tracking_real.py" output="screen">
+        <!-- <remap from="/scan" to="/scan_merged"/> -->
+        <remap from="/scan" to="/front/scan"/>
+        <param name="use_amcl" value="true"/>
+		<rosparam file="$(find tracking_2d_lidar)/src/setting_best.yaml" command="load"/>
+    </node>
+
+
+
+    <!-- <group ns="robot_1">
+        <node name="visualize_obstacle_velocity_profile" pkg="dwa_stage" type="visualize_obstacle_velocity_profile.py" output="screen" />
+    </group> -->
+
+    <!-- <node name="visualize_error" pkg="tracking_2d_lidar" type="visualize_cov.py" output="screen" /> -->
+
+    <!-- <node name="visualize_error" pkg="tracking_2d_lidar" type="plot_cov.py" output="screen" /> -->
+</launch>

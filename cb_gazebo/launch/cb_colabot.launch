@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="world_name" default="indoors12" />
+  <arg name="gui" default="true" />
+  <arg name="run_camera" default="false"/>
+
+  <!-- distance between two cars -->
+  <arg name="dist" default="2.0" />
+  <arg name="dist_half" default="$(eval arg('dist')/2)" />
+  <arg name="dist_half_negative" default="$(eval -arg('dist')/2)" />
+
+  <param name ="/use_sim_time" value="true"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find cb_gazebo)/worlds/$(arg world_name).world"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <!-- BEGIN ROBOT 1-->
+  <group ns="car1">
+    <include file="$(find cb_gazebo)/launch/one_car.launch" >
+      <arg name="init_pose" value="-x $(arg dist_half) -y 3 -z 0" />
+      <arg name="robot_name" value="car1_" />
+    </include>
+  </group>
+
+  <!-- BEGIN ROBOT 2-->
+  <group ns="car2">
+    <include file="$(find cb_gazebo)/launch/one_car.launch" >
+      <arg name="init_pose" value="-x $(arg dist_half_negative) -y 3 -z 0" />
+      <arg name="robot_name"  value="car2_" />
+    </include>
+  </group>
+
+  <!-- Obstacle -->
+    <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+      <param name="obstacle_description" 
+            command="$(find xacro)/xacro --inorder '$(find cb_description)/urdf/obstacle.xacro'" />
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+      <node name="obstacle_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+            args="-urdf -x 0 -y 0 -z 0 -param obstacle_description -model 'obstacle'" />  
+
+</launch>

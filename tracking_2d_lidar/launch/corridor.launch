@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+<include file="$(find cb_gazebo)/launch/corridor.launch" />
+
+<include file="$(find tracking_2d_lidar)/launch/tracking_gazebo.launch" />
+
+<!-- <node pkg="rosbag" type="play" name="player" output="screen" args="-l /home/wuch/tracking_ws/src/Tracking/tracking_2d_lidar/bagfiles/robot_0_cmd_vel.bag"/> -->
+
+
+</launch>

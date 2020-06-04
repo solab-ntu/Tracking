@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_name"/>
+  <arg name="init_pose"/>
+
+  <!-- spawn a car -->
+    <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+    <param name="robot_description" 
+          command="$(find xacro)/xacro --inorder '$(find cb_description)/urdf/racecar.xacro' 
+                      robot_tf_prefix:=$(arg robot_name)" />
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="racecar_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+          args="-urdf $(arg init_pose) -param robot_description -model '$(arg robot_name)'" />
+
+
+  <!-- spawn a platform -->
+    <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+    <param name="platform_description" 
+          command="$(find xacro)/xacro --inorder '$(find cb_description)/urdf/platform.xacro' 
+                      robot_tf_prefix:=$(arg robot_name)"/>
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="platform_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+          args="-urdf $(arg init_pose) -param platform_description -model '$(arg robot_name)_platform'" />  
+
+
+  <!-- ros_control launch file -->
+  <include file="$(find cb_control)/launch/racecar_control.launch" >
+    <arg name="robot_name"  value="$(arg robot_name)" />
+  </include>
+
+  <!-- relay front & rear scan -->
+  <!-- node name="scan_rely_front" pkg="topic_tools" type="relay" args="front/scan scan" / -->
+  <!-- node name="scan_rely_rear" pkg="topic_tools" type="relay" args="rear/scan scan" / -->
+
+
+</launch>

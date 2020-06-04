@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/wuch/catkin_ws/devel/include/**",
+                "/opt/ros/kinetic/include/**",
+                "/home/wuch/catkin_ws/src/nav_tuning/new_layers/include/**",
+                "/home/wuch/tracking_ws/src/Tracking/tracking_2d_lidar/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}

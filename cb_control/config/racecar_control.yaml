@@ -1,0 +1,12 @@
+
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+
+  # Velocity Controllers ---------------------------------------
+  car_velocity_controller:
+    type: effort_controllers/JointVelocityController
+    joint: car_joint
+    pid: {p: 1.0, i: 0.0, d: 0.0, i_clamp: 0.0}

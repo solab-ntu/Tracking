@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<robot name="racecar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="robot_tf_prefix" default=""/>
+
+  <link name="platform">
+    <inertial>
+      <origin xyz="0 0 -0.025" rpy="0 0 0" />
+      <mass value="1000.0" />
+      <inertia ixx="1000.0"    ixy="0.0"       ixz="0.0"
+                             iyy="1000.0"      iyz="0.0"
+                                             izz="1000.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.3 0.2 0.05" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.1" radius="0.2" />
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+              <mu>100</mu>
+              <mu2>100</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </link>
+
+  <link name="link_1">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25 0.01 0.3" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25 0.01 0.3" />
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+              <mu>100</mu>
+              <mu2>100</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </link>
+
+  <joint name="joint_1" type="fixed">
+    <origin xyz="0 0.105 0.1" rpy="0 0 0" />
+    <parent link="platform"/>
+    <child link="link_1" />
+  </joint>
+
+  <link name="link_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25 0.01 0.3" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25 0.01 0.3" />
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+              <mu>100</mu>
+              <mu2>100</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </link>
+
+  <joint name="joint_2" type="fixed">
+    <origin xyz="0 -0.105 0.1" rpy="0 0 0" />
+    <parent link="platform"/>
+    <child link="link_2" />
+  </joint>
+
+  <link name="link_3">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.16 0.3" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.16 0.3" />
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+              <mu>100</mu>
+              <mu2>100</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </link>
+
+  <joint name="joint_3" type="fixed">
+    <origin xyz="0.155 0 0.1" rpy="0 0 0" />
+    <parent link="platform"/>
+    <child link="link_3" />
+  </joint>
+
+  <link name="link_4">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.16 0.2" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.16 0.2" />
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+              <mu>100</mu>
+              <mu2>100</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </link>
+
+  <joint name="joint_4" type="fixed">
+    <origin xyz="-0.155 0 0.05" rpy="0 0 0" />
+    <parent link="platform"/>
+    <child link="link_4" />
+  </joint>
+
+  <link name="link_5">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.35 0.1" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.35 0.1" />
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+              <mu>100</mu>
+              <mu2>100</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+  </link>
+
+  <joint name="joint_5" type="fixed">
+    <origin xyz="-0.155 0 0.2" rpy="0 0 0" />
+    <parent link="platform"/>
+    <child link="link_5" />
+  </joint>
+
+  <gazebo>
+    <!-- Planar Move Plugin -->
+    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>deprecated_odom</odometryTopic>
+      <odometryFrame>$(arg robot_tf_prefix)deprecated_odom</odometryFrame>
+      <odometryRate>10.0</odometryRate>
+      <robotBaseFrame>$(arg robot_tf_prefix)platform</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+</robot>

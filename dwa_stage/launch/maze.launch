@@ -1,0 +1,67 @@
+<launch>
+
+        <!--  ************** Global Parameters ***************  -->
+        <param name="/use_sim_time" value="true"/>
+
+        <!--  ************** Stage Simulator ***************  -->
+	<node pkg="stage_ros" type="stageros" name="stageros" args="$(find dwa_stage)/stage/maze_diff_drive.world">
+		<remap from="/robot_0/base_scan" to="/robot_0/scan"/>
+  	</node>
+
+	<param name="/new_layers/predict_layer/prediction_time" value="4.0" />
+	<param name="/new_layers/predict_layer/bound" value="5.0" />
+	<param name="/new_layers/predict_layer/predict_line_thickness" value="8.0" />
+	
+
+        <!--  ************** Navigation ***************  -->
+    <group ns="robot_0">
+		<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+			<rosparam file="$(find dwa_stage)/cfg/diff_drive/costmap_common_params.yaml" command="load" ns="global_costmap" />
+			<rosparam file="$(find dwa_stage)/cfg/diff_drive/costmap_common_params.yaml" command="load" ns="local_costmap" />
+			<rosparam file="$(find dwa_stage)/cfg/diff_drive/dyn_obst/local_costmap_params.yaml" command="load" />
+			<rosparam file="$(find dwa_stage)/cfg/diff_drive/dyn_obst/global_costmap_params.yaml" command="load" />
+			<rosparam file="$(find dwa_stage)/cfg/diff_drive/dwa_local_planner_params.yaml" command="load" />
+
+			<param name="base_global_planner" value="global_planner/GlobalPlanner" />
+			<param name="planner_frequency" value="1.0" />
+			<param name="planner_patience" value="5.0" />
+
+			<param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+			<param name="controller_frequency" value="5.0" />
+			<param name="controller_patience" value="15.0" />
+		</node>
+
+    	<node name="teleop" pkg="dwa_stage" type="teleop_twist_keyboard_carlike.py"/>
+    </group>
+
+    <!--  ****** Maps *****  -->
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find dwa_stage)/maps/maze.yaml" output="screen">
+        <param name="frame_id" value="map"/>
+	</node>
+	
+	<node pkg="amcl" type="amcl" name="amcl" output="screen">
+		<rosparam file="$(find dwa_stage)/cfg/amcl_params.yaml" command="load" />
+	    <param name="initial_pose_x"            value="4"/>
+		<param name="initial_pose_y"            value="3"/>
+		<param name="initial_pose_a"            value="0"/>
+		<remap from="/scan" to="/robot_0/scan"/>
+	</node>
+
+	<!--  **************** Visualisation ****************  -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find dwa_stage)/cfg/rviz_navigation.rviz">
+		<remap from="/move_base_simple/goal" to="/robot_0/move_base_simple/goal" />
+	</node>
+
+	<!-- ****************** Obstacles ******************** -->
+	<group ns="robot_1">
+		<param name="tf_prefix" value="robot_1"/>
+		<node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+		<param name="vel_y" value="0.3" />
+		<param name="vel_x" value="0.2" />
+		<param name="pos_lb_x" value="5" />
+		<param name="pos_ub_x" value="7" />
+		<param name="pos_lb_y" value="3" />
+		<param name="pos_ub_y" value="5" />
+	</group>
+
+</launch>

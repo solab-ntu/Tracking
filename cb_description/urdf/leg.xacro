@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<robot name="racecar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <link name="obstacle">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1000.0" />
+      <inertia ixx="1000.0"    ixy="0.0"       ixz="0.0"
+                             iyy="1000.0"      iyz="0.0"
+                                             izz="1000.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.8" radius="0.075" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.8" radius="0.075" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="link_1">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1000.0" />
+      <inertia ixx="1000.0"    ixy="0.0"       ixz="0.0"
+                             iyy="1000.0"      iyz="0.0"
+                                             izz="1000.0" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.8" radius="0.075" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder length="0.8" radius="0.075" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint_1" type="fixed">
+    <origin xyz="0 0.3 0" rpy="0 0 0" />
+    <parent link="obstacle"/>
+    <child link="link_1" />
+  </joint>
+
+  <gazebo>
+    <!-- Planar Move Plugin -->
+    <plugin name="obstacle_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>/obstacle/cmd_vel</commandTopic>
+      <odometryTopic>obstacle_odom</odometryTopic>
+      <odometryFrame>obstacle_odom</odometryFrame>
+      <odometryRate>10.0</odometryRate>
+      <robotBaseFrame>obstacle</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+</robot>

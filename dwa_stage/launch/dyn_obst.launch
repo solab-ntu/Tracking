@@ -1,0 +1,167 @@
+<launch>
+  <arg name="send_goal" default="true"/>
+  <arg name="use_rviz" default="true"/>
+  <arg name="use_costmap2dynobst" default="false"/>
+
+  <arg name="map_file"  default="corridor"/>
+
+  <!--  ************** Global Parameters ***************  -->
+  <param name="/use_sim_time" value="true"/>
+
+  <!--  ************** Stage Simulator *****************  -->
+  <node pkg="stage_ros" type="stageros" name="stageros" args="$(find dwa_stage)/stage/$(arg map_file).world" required="true">
+    <remap from="/robot_0/base_scan" to="/robot_0/scan"/>
+  </node>
+
+  <!--  ******************* Maps ***********************  -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find dwa_stage)/maps/$(arg map_file).yaml">
+    <param name="frame_id" value="map"/>
+  </node>
+
+  <param name="/new_layers/predict_layer/prediction_time" value="10.0" />
+	<param name="/new_layers/predict_layer/bound" value="5.0" />
+	<param name="/new_layers/predict_layer/predict_line_thickness" value="8.0" />
+
+  <!--  ************** Navigation ROBOT 0 *************  -->
+  <group ns="robot_0">
+    <!-- work around for footprint reload -->
+  	<rosparam command="delete" ns="move_base" />
+
+    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="2 3 0 0 0 0 1 /map /robot_0/odom 100" />
+  
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base">
+      <rosparam file="$(find dwa_stage)/cfg/diff_drive/costmap_common_params.yaml" command="load" ns="global_costmap" />
+      <rosparam file="$(find dwa_stage)/cfg/diff_drive/costmap_common_params.yaml" command="load" ns="local_costmap" />
+      <rosparam file="$(find dwa_stage)/cfg/diff_drive/dyn_obst/local_costmap_params.yaml" command="load" />
+      <rosparam file="$(find dwa_stage)/cfg/diff_drive/dyn_obst/global_costmap_params.yaml" command="load" />
+      <rosparam file="$(find dwa_stage)/cfg/diff_drive/dwa_local_planner_params.yaml" command="load" />
+
+      <!-- <rosparam file="$(find teb_local_planner_tutorials)/cfg/diff_drive/dyn_obst/costmap_converter_params.yaml" command="load" /> -->
+
+      <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+		  <param name="planner_frequency" value="3.0" />
+		  <param name="planner_patience" value="5.0" />
+
+      <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+      <param name="controller_frequency" value="5.0" />
+      <param name="controller_patience" value="15.0" />
+
+      <remap from="map" to="/map"/>
+    </node>
+
+    <!-- teleop -->
+    <node name="teleop" pkg="dwa_stage" type="teleop_twist_keyboard_carlike.py"/>
+  </group>
+
+  <!-- ****************** Obstacles ******************** -->
+  <group ns="robot_1">
+    <param name="tf_prefix" value="robot_1"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_2">
+    <param name="tf_prefix" value="robot_2"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_3">
+    <param name="tf_prefix" value="robot_3"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_4">
+    <param name="tf_prefix" value="robot_4"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_5">
+    <param name="tf_prefix" value="robot_5"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_6">
+    <param name="tf_prefix" value="robot_6"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_7">
+    <param name="tf_prefix" value="robot_7"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_8">
+    <param name="tf_prefix" value="robot_8"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_9">
+    <param name="tf_prefix" value="robot_9"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_10">
+    <param name="tf_prefix" value="robot_10"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_11">
+    <param name="tf_prefix" value="robot_11"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_12">
+    <param name="tf_prefix" value="robot_12"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <group ns="robot_13">
+    <param name="tf_prefix" value="robot_13"/>
+    <node name="Mover" pkg="dwa_stage" type="move_obstacle.py"/>
+    <param name="vel_y" value="0.3" />
+    <param name="vel_x" value="0.0" />
+  </group>
+
+  <!-- <node name="ground_truth_obstacles" pkg="dwa_stage" type="publish_ground_truth_obstacles.py" /> -->
+
+  <!--node name="visualize_velocity_profile" pkg="dwa_stage" type="visualize_velocity_profile.py" /-->
+
+  <!--  **************** Visualisation ****************  -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find dwa_stage)/cfg/rviz_navigation_cc.rviz" if="$(arg use_rviz)">
+    <remap from="/move_base_simple/goal" to="/robot_0/move_base_simple/goal" />
+  </node>
+
+  <!--  **************** Costmap to Dynamic Obstacles ****************  -->
+  <!-- <node name="standalone_converter" pkg="costmap_converter" type="standalone_converter" output="screen" if="$(arg use_costmap2dynobst)">
+    <param name="converter_plugin" value="costmap_converter::CostmapToDynamicObstacles" />
+    <param name="costmap_topic" value="/robot_0/move_base/local_costmap/costmap" />
+    <param name="odom_topic" value="/robot_0/odom" />
+  </node>  -->
+
+
+  <node name="path_pub" pkg="tracking_2d_lidar" type="publish_path.py"/>
+
+</launch>

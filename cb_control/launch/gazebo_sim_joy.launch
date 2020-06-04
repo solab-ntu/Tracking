@@ -1,0 +1,11 @@
+<!-- -*- mode: XML -*- -->
+
+<launch>
+
+  <remap from="/ackermann_cmd_mux/input/teleop" to="/racecar/ackermann_cmd_mux/input/teleop"/>
+
+  <include file="$(find cb_gazebo)/launch/racecar_tunnel.launch"/>
+
+  <include file="$(find cb_control)/launch/teleop.launch"/>
+
+</launch>

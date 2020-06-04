@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<robot name="racecar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- Gazebo references -->
+
+<gazebo reference="base_link">
+  <material>Gazebo/Blue</material>
+</gazebo>
+
+<!-- Gazebo plugins -->
+<gazebo>
+  <!-- ros control -->
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>/$(arg robot_tf_prefix)</robotNamespace>
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+  </plugin>
+</gazebo>
+
+<!-- hokuyo -->
+
+<!-- hokuyo_front -->
+<xacro:unless value="$(optenv DISABLE_GAZEBO_LASER false)">
+  <gazebo reference="hokuyo_front_link">
+    <material>Gazebo/Red</material>
+    <sensor type="ray" name="hokuyo_$(arg robot_tf_prefix)front">
+      <pose>0 0 0.0124 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>683</samples>
+            <resolution>1</resolution>
+            <min_angle>-2.094395</min_angle>
+            <max_angle>2.094395</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>5.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.02</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_hokuyo_$(arg robot_tf_prefix)front" filename="libgazebo_ros_laser.so">
+        <topicName>front/scan</topicName>
+        <frameName>hokuyo_front_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+</xacro:unless>
+
+<!-- hokuyo_rear -->
+<!-- <xacro:unless value="$(optenv DISABLE_GAZEBO_LASER false)">
+  <gazebo reference="hokuyo_rear_link">
+    <material>Gazebo/Grey</material>
+    <sensor type="ray" name="hokuyo_$(arg robot_tf_prefix)rear">
+      <pose>0 0 0.0124 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>683</samples>
+            <resolution>1</resolution>
+            <min_angle>-2.094395</min_angle>
+            <max_angle>2.094395</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>5.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.005</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_hokuyo_$(arg robot_tf_prefix)rear" filename="libgazebo_ros_laser.so">
+        <topicName>rear/scan</topicName>
+        <frameName>hokuyo_rear_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+</xacro:unless> -->
+
+<!-- imu -->
+<gazebo reference="imu_link">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>__default_topic__</topic>
+      <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+        <topicName>imu_data</topicName>
+        <bodyName>$(arg robot_tf_prefix)imu_link</bodyName>
+        <updateRateHZ>30.0</updateRateHZ>
+        <gaussianNoise>0.0001</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>imu_link</frameName>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+
+
+</robot>

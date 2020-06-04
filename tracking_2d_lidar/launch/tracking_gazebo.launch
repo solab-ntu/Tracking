@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- <include file="$(find tracking_2d_lidar)/launch/includes/urg.xml" /> -->
+    <!-- <node name="tracking_2d_lidar" pkg="tracking_2d_lidar" type="track_2d_lidar_node.py" output='screen' /> -->
+    
+
+    <node name="tracking" pkg="tracking_2d_lidar" type="tracking_new.py" output="screen" required="true">
+        <!-- <remap from="/odom" to="/robot_0/odom"/> -->
+        <remap from="/scan" to="/front/scan"/>
+        <param name="use_amcl" value="false"/>
+		<rosparam file="$(find tracking_2d_lidar)/src/setting.yaml" command="load"/>
+		<!-- <rosparam file="$(find tracking_2d_lidar)/src/setting_one_param.yaml" command="load"/> -->
+    
+    </node>
+
+
+<!-- 
+    <group ns="robot_1">
+        <node name="visualize_obstacle_velocity_profile" pkg="dwa_stage" type="visualize_obstacle_velocity_profile.py" output="screen" />
+    </group> -->
+
+    <node name="visualize_error" pkg="tracking_2d_lidar" type="visualize_estimation_error.py" output="screen" />
+
+
+</launch>

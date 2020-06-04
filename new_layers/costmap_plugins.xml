@@ -1,0 +1,33 @@
+<class_libraries>
+
+<library path="lib/libsmartobstacle_layer">
+  <class type="costmap_2d::SmartobstacleLayer" base_class_type="costmap_2d::Layer">
+    <description>Clear the map every update</description>
+  </class>
+</library>
+
+<library path="lib/libstaticobstacle_layer">
+  <class type="costmap_2d::StaticobstacleLayer" base_class_type="costmap_2d::Layer">
+    <description> just a duplicate of SmartobstacleLayer</description>
+  </class>
+</library>
+
+<library path="lib/libobserve_layer">
+  <class type="new_layers::ObserveLayer" base_class_type="costmap_2d::Layer">
+    <description>Get ObstacleArrayMsg from costmap_converter and draw obstacles along the predicted velocity</description>
+  </class>
+</library>
+
+<library path="lib/libpredict_layer">
+  <class type="new_layers::PredictLayer" base_class_type="costmap_2d::Layer">
+    <description>Add predicted paths of dynamic obstacles on the cost map</description>
+  </class>
+</library>
+
+<!-- <library path="lib/libdynobstacle_layer">
+  <class type="new_layers::DynobstacleLayer" base_class_type="costmap_2d::Layer">
+    <description>Get ObstacleArrayMsg from costmap_converter and draw obstacles along the predicted velocity</description>
+  </class>
+</library> -->
+
+</class_libraries>

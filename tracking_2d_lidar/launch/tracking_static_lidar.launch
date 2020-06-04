@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find tracking_2d_lidar)/launch/includes/urg.xml" />
+    
+    <node name="tracking" pkg="tracking_2d_lidar" type="tracking_static_lidar.py" output="screen" />
+
+
+</launch>

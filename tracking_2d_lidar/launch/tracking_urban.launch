@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- <include file="$(find tracking_2d_lidar)/launch/includes/urg.xml" /> -->
+
+    <node pkg="rosbag" type="play" name="player" output="screen" args="--clock /home/wuch/tracking_ws/src/Tracking/urban_in_stage/bag/urban.bag"/>
+
+
+    <remap from="/scan" to="/robot_0/scan"/>
+    <remap from="/odom" to="/robot_0/odom"/>
+    <remap from="/cmd_vel" to="/robot_0/cmd_vel"/>
+    <node name="tracking_2d_lidar" pkg="tracking_2d_lidar" type="track_2d_lidar_node.py" output='screen' />
+    
+    <!-- <node name="test_coarse_level_association" pkg="tracking_2d_lidar" type="test_coarse_level.py" output='screen' /> -->
+
+</launch>

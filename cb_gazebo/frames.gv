@@ -1,0 +1,26 @@
+digraph G {
+"base_footprint" -> "base_link"[label="Broadcaster: /robot_0/robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 408.137 sec old)\nBuffer length: 0.000 sec\n"];
+"odom" -> "base_footprint"[label="Broadcaster: /gazebo_odom\nAverage rate: 20.215 Hz\nMost recent transform: 408.124 ( 0.013 sec old)\nBuffer length: 4.650 sec\n"];
+"base_link" -> "hokuyo_front_link"[label="Broadcaster: /robot_0/robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 408.137 sec old)\nBuffer length: 0.000 sec\n"];
+"base_link" -> "hokuyo_rear_link"[label="Broadcaster: /robot_0/robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 408.137 sec old)\nBuffer length: 0.000 sec\n"];
+"base_link" -> "imu_link"[label="Broadcaster: /robot_0/robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 408.137 sec old)\nBuffer length: 0.000 sec\n"];
+"robot_2_odom" -> "robot_2_obstacle"[label="Broadcaster: /gazebo\nAverage rate: 10.121 Hz\nMost recent transform: 408.038 ( 0.099 sec old)\nBuffer length: 4.545 sec\n"];
+"robot_1_odom" -> "robot_1_obstacle"[label="Broadcaster: /gazebo\nAverage rate: 10.119 Hz\nMost recent transform: 408.049 ( 0.088 sec old)\nBuffer length: 4.546 sec\n"];
+"robot_0deprecated_odom" -> "robot_0platform"[label="Broadcaster: /gazebo\nAverage rate: 10.121 Hz\nMost recent transform: 408.054 ( 0.083 sec old)\nBuffer length: 4.545 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 408.137"[ shape=plaintext ] ;
+ }->"odom";
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 408.137"[ shape=plaintext ] ;
+ }->"robot_2_odom";
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 408.137"[ shape=plaintext ] ;
+ }->"robot_1_odom";
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 408.137"[ shape=plaintext ] ;
+ }->"robot_0deprecated_odom";
+}

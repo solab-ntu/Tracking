@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="bagfile" default="real_4" />
+
+    <!-- bag topics: /map /scan_merged /amcl_pose -->
+    <node pkg="rosbag" type="play" name="player" args="/home/wuch/tracking_ws/src/Tracking/tracking_2d_lidar/bagfiles/$(arg bagfile).bag"/>
+
+    <node name="visualize_error" pkg="tracking_2d_lidar" type="plot_estimated_vel.py" output="screen" />
+
+
+</launch>
