@@ -45,7 +45,25 @@ def plot_segmentation(clusters, laser):
     colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']*10
 
     # plot
-    for cluster, color in zip(clusters.clusters, colors): 
+    for i, (cluster, color) in enumerate(zip(clusters.clusters, colors)): 
+        # laser
         a = ax.scatter(laser.cartesian[cluster,[0]], laser.cartesian[cluster,[1]], s=10.0, c=color, linewidths=0)
+        
+        # box
+        left = min(laser.cartesian[cluster,[0]])
+        bottom = min(laser.cartesian[cluster,[1]])
+        width = abs(max(laser.cartesian[cluster,[0]])-left)
+        height = abs(max(laser.cartesian[cluster,[1]])-bottom)
+        p = plt.Rectangle((left, bottom), width, height, fill=False, edgecolor=color, linewidth=2)
+        #p.set_transform(self.ax.transAxes)
+        #p.set_clip_on(False)
+        ax.add_patch(p)
+
+
+        # id
+        text = ('%d' % (i))
+        top = bottom + height + 0.1
+        ax.text(left, top, text, color=color, fontsize=18)
+
     
     plt.savefig('/home/wuch/Pictures/laser_seg.png')

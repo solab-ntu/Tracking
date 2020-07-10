@@ -1,12 +1,14 @@
 import numpy as np
 import rospy
 from std_msgs.msg import Float32MultiArray
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Point
 from nav_msgs.msg import OccupancyGrid, Odometry
 from sensor_msgs.msg import LaserScan
 from tracking_2d_lidar.msg import TracksMsg, TracksArrayMsg
+from visualization_msgs.msg import Marker, MarkerArray
 import copy
 import matplotlib.pyplot as plt
+import tf
 
 class ProcessKF:
     def __init__(self, state, inflate_size=8, static_threshold=0.7, speed_threshold=0.2, prediction_time=3.0):
@@ -32,6 +34,9 @@ class ProcessKF:
         # pub tracks x,y,vx,vy to costmap
         rospy.set_param('/new_layers/predict_layer/prediction_time', prediction_time)   
         self.pub_tracks = rospy.Publisher('/tracks', TracksArrayMsg, queue_size=1)
+
+        # pub tracks to rviz marker
+        self.pub_tracks_marker = rospy.Publisher('/tracks_marker', MarkerArray, queue_size=1)
 
         # for visualization to compare with true vel
         self.pub = rospy.Publisher('/robot_1/vel_kf', Twist, queue_size=1)
@@ -290,22 +295,88 @@ class ProcessKF:
 
     def publish_to_costmap(self):       
         msg_arr = TracksArrayMsg()
+        marker_arr = MarkerArray()
 
         msg_arr_ = []
+        marker_arr_ = []
 
-        for track in self.x.tracks:
-            if track.static == 0 and track.counter < 0:  # dynamic and mature
+        # marker(delete all objects of previous frame)
+        marker = Marker()
+        marker.header.frame_id = 'map'
+        marker.type = 0  # 0: arrow
+        marker.action = 3  # 0: add
+        marker_arr_.append(marker)
+
+        for i, track in enumerate(self.x.tracks):
+            # if track.static == 0 and track.counter < 0:  # dynamic and mature
+            if track.static != 1:  # dynamic 
+                # to costmap
                 msg = TracksMsg()
-                msg.x.data = track.kf.x[0][0]
-                msg.y.data = track.kf.x[1][0]
-                msg.vx.data = track.kf.x[2][0]
-                msg.vy.data = track.kf.x[3][0]
+                msg.x.data = track.kf.x[0][0]  # x
+                msg.y.data = track.kf.x[1][0]  # y
+                msg.vx.data = track.kf.x[2][0]  # vx
+                msg.vy.data = track.kf.x[3][0]  # vy
 
                 msg_arr_.append(msg)
 
+                # marker(arrow)
+                marker = Marker()
+                marker.header.frame_id = 'map'
+                # marker.header.stamp = rospy.get_rostime()
+                # marker.ns = "my_namespace"
+                marker.id = i
+                marker.type = 0  # 0: arrow
+                marker.action = 0  # 0: add
+                #marker.lifetime = rospy.Duration.from_sec(600)  # has no effect: The countdown resets if another marker of the same namespace/id is received.
+                # marker.pose.position.x = track.kf.x[0][0]
+                # marker.pose.position.y = track.kf.x[1][0]
+                # marker.pose.position.z = 1
+                # quaternion = tf.transformations.quaternion_from_euler(0, 0, np.arctan2(track.kf.x[3][0], track.kf.x[2][0]))
+                # marker.pose.orientation.x = quaternion[0]
+                # marker.pose.orientation.y = quaternion[1]
+                # marker.pose.orientation.z = quaternion[2]
+                # marker.pose.orientation.w = quaternion[3]
+                start = Point()
+                start.x = track.kf.x[0][0]
+                start.y = track.kf.x[1][0]
+                end = Point()
+                end.x = start.x + 1.2*track.kf.x[2][0]
+                end.y = start.y + 1.2*track.kf.x[3][0]
+                marker.points = [start, end]
+                marker.scale.x = 0.1
+                marker.scale.y = 0.15
+                marker.scale.z = 0.15
+                marker.color.a = 1.0  # Don't forget to set the alpha!
+                marker.color.r = 0.0
+                marker.color.g = 0.0
+                marker.color.b = 1.0
+
+                marker_arr_.append(marker)
+
+                # # marker (text)
+                # marker = Marker()
+                # marker.header.frame_id = 'map'
+                # marker.id = i + 100
+                # marker.type = 9  # 0: arrow
+                # marker.action = 0  # 0: add
+                # marker.pose.position.x = track.kf.x[0][0] + 0.1
+                # marker.pose.position.y = track.kf.x[1][0]
+                # marker.text = str(track.id)
+                # marker.scale.x = 0.5
+                # marker.scale.y = 0.5
+                # marker.scale.z = 0.5
+                # marker.color.a = 1.0  # Don't forget to set the alpha!
+                # marker.color.r = 0.0
+                # marker.color.g = 0.0
+                # marker.color.b = 1.0
+
+                # marker_arr_.append(marker)
+
         msg_arr.tracks = msg_arr_
+        marker_arr.markers = marker_arr_
 
         self.pub_tracks.publish(msg_arr)
+        self.pub_tracks_marker.publish(marker_arr)
 
 
     def publish_static_scan(self):

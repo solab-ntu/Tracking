@@ -81,7 +81,7 @@ def realtime_test():
         # duration_3 = time_3 - time_2
 
         # --- 4. Coarse-level data association (ICP): update JointState.track_indices
-        CoarseLevel(laser_odom_now, laser_prev, clusters_now, clusters_prev, x, tentative_threshold=5, icp_max_dist=icp_max_dist)
+        CoarseLevel(laser_odom_now, laser_prev, clusters_now, clusters_prev, x, tentative_threshold=0, icp_max_dist=icp_max_dist)
         # time_4 = time.time()
         # duration_4 = time_4 - time_3
 

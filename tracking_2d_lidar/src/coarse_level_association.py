@@ -14,7 +14,7 @@ from laser_subscriber import LaserSub
 
 class CoarseLevel:
     def __init__(self, laser_now, laser_prev, clusters, clusters_prev, 
-                    joint_state, tentative_threshold=5, icp_max_dist=0.5):
+                    joint_state, tentative_threshold=0, icp_max_dist=0.5):
         # members
         self.x  = joint_state  # joint state
         self.tent_thresh = tentative_threshold  # tentative count thereshold
@@ -28,7 +28,7 @@ class CoarseLevel:
         # if cluster_now is not the first cluster
         if laser_prev is not None and clusters_prev is not None:
             # ICP (points match to points)
-            dst_indices, T = icp(laser_now.cartesian, laser_prev.cartesian, 
+            dst_indices = icp(laser_now.cartesian, laser_prev.cartesian, 
                                 init_pose=None, max_iterations=20, tolerance=0.001, max_dist=icp_max_dist)
             
             # Match Clusters (clusters match to clusters)
@@ -62,6 +62,12 @@ class CoarseLevel:
 
                     # append track_indices
                     track_indices_new.append(len(self.x.tracks) - 1)  # new index
+
+                else:
+                    rospy.loginfo('!!!!!!!!!!!!!!!!!!!!BUG-------------------')
+                    rospy.loginfo('!!!!!!!!!!!!!!!!!!!!BUG-------------------')
+                    rospy.loginfo('!!!!!!!!!!!!!!!!!!!!BUG-------------------')
+                    rospy.loginfo('!!!!!!!!!!!!!!!!!!!!BUG-------------------')
 
 
             # remove xt, xp who is not matched by any cluster_now. update indices
@@ -169,56 +175,83 @@ def test_icp():
     b = LaserSubFake('/home/wuch/tracking_ws/src/Tracking/tracking_2d_lidar/bagfiles/test_icp_0.dat')  # destination (previous)
 
     # plot icp point-to-point
-    #test_plot_icp_point2point(a, b)
+    test_plot_icp_point2point(a, b)
 
     # plot icp cluster-to-cluster
-    test_plot_icp_cluster2cluster(a, b)
+    # test_plot_icp_cluster2cluster(a, b)
 
 
-# def test_plot_icp_point2point(a, b):
-#     ''' Deprecated
-#     Need to change icp code (last few lines) in order to work
-#     '''
-#     #
-#     A = a.cartesian
-#     B = b.cartesian
+def test_plot_icp_point2point(a, b):
+    ''' Deprecated
+    Need to change icp code (last few lines) in order to work
+    '''
+    #
+    A = a.cartesian
+    B = b.cartesian
 
-#     # ICP
-#     dst_indices, T, distances, iterations = icp(A, B, init_pose=None, max_iterations=20, tolerance=0.001)
-#     A_matched = A[src_indices,:]
-#     B_matched = B[dst_indices,:]
+    # ICP
+    src_indices, dst_indices, T, distances, iterations = icp(A, B, init_pose=None, max_iterations=20, tolerance=0.001)
+    A_matched = A[src_indices,:]
+    B_matched = B[dst_indices,:]
 
-#     # transform A according to T
-#     m = A.shape[1]
-#     A_homo = np.ones((m+1,A.shape[0]))  
-#     A_homo[:m,:] = np.copy(A.T)
-#     A_homo_after = np.dot(T, A_homo)
-#     A_after = A_homo_after[:m,:].T
+    # transform A according to T
+    m = A.shape[1]
+    A_homo = np.ones((m+1,A.shape[0]))  
+    A_homo[:m,:] = np.copy(A.T)
+    A_homo_after = np.dot(T, A_homo)
+    A_after = A_homo_after[:m,:].T
 
-#     # print results
-#     print('Homogeneous Transformation Matrix: ' + str(T))
-#     print('Number of iterations: %f' % iterations)
+    # print results
+    print('Homogeneous Transformation Matrix: ' + str(T))
+    print('Number of iterations: %f' % iterations)
 
-#     # plot setup
-#     plt.figure()
-#     plt.title('Result of Iterative Closest Point')
+    # plot setup
+    fig, ax = plt.subplots()
+    # ax.set_aspect('equal')
+    # plt.title('Result of Iterative Closest Point', fontsize=20)
+    plt.title('Number of iteration = 7', fontsize=20)
 
-#     # plot scan
-#     plt.scatter(A[:,0], A[:,1], c='r', linewidths=0, s=300)
-#     plt.scatter(B[:,0], B[:,1], c='g', linewidths=0, s=300)
-#     plt.scatter(A_after[:,0], A_after[:,1], c='b', linewidths=0, s=300)
-#     plt.scatter(A_matched[:,0], A_matched[:,1], c='w', linewidths=0, s=100)
-#     plt.scatter(B_matched[:,0], B_matched[:,1], c='w', linewidths=0, s=100)
+    # plot scan
+    ax.scatter(A[:,0], A[:,1], c='b', linewidths=0, s=150)
+    ax.scatter(B[:,0], B[:,1], c='r', linewidths=0, s=150)
+    ax.scatter(A_after[:,0], A_after[:,1], c='b', linewidths=0, s=150, alpha=0.35)
+    # plt.scatter(A_matched[:,0], A_matched[:,1], c='w', linewidths=0, s=100)
+    # plt.scatter(B_matched[:,0], B_matched[:,1], c='w', linewidths=0, s=100)
 
-#     # plot lines between matching points
-#     for a, b in zip(A_matched, B_matched):
-#         x = a[0]
-#         y = a[1]
-#         dx = b[0] - a[0]
-#         dy = b[1] - a[1]
-#         plt.arrow(x, y, dx, dy, width=0.0001, head_width=0.005)
+    # generate legend
+    ax.scatter(A[0,0], A[0,1], c='b', linewidths=0, s=150, label='Source')
+    ax.scatter(B[0,0], B[0,1], c='r', linewidths=0, s=150, label='Destination')
+    ax.scatter(A_after[0,0], A_after[0,1], c='b', linewidths=0, s=150, alpha=0.35, label='Transformed source')
 
-#     plt.show()
+    # plot lines between matching points
+    for a, b in zip(A_matched, B_matched):
+        x = a[0]
+        y = a[1]
+        dx = b[0] - a[0]
+        dy = b[1] - a[1]
+        plt.arrow(x, y, dx, dy, width=0.0001, head_width=0.005)
+
+    # plt.xlabel('x (m)', fontsize=20)
+    # plt.ylabel('y (m)', fontsize=20)
+    # plt.xlim(-2.,4.)
+    # plt.ylim(-5.,5.)
+    plt.xlim(1.6,3.0)
+    plt.ylim(2.4,3.4)
+    plt.legend(loc='lower right')
+
+    # # box
+    # left = 1.6
+    # bottom = 2.4
+    # width = 3.0-1.6
+    # height = 3.4-2.4
+    # p = plt.Rectangle((left, bottom), width, height, fill=False, edgecolor='r', linewidth=2)
+    # #p.set_transform(self.ax.transAxes)
+    # #p.set_clip_on(False)
+    # ax.add_patch(p)
+    # ax.text(1.6,2.1, 'A', color='r', fontsize=20)
+
+    # plt.tight_layout()
+    plt.show()
 
 
 def test_plot_icp_cluster2cluster(laser_a, laser_b):
@@ -231,8 +264,8 @@ def test_plot_icp_cluster2cluster(laser_a, laser_b):
     clusters_b = Cluster(mst_b, k=1.0, min_size=10)
 
     # icp
-    dst_indices, T = icp(laser_a.cartesian, laser_b.cartesian, init_pose=None, max_iterations=20, tolerance=0.001)
-    matched_cluster_indices, _ = match_clusters(dst_indices, laser_a, laser_b, clusters_a, clusters_b)
+    dst_indices = icp(laser_a.cartesian, laser_b.cartesian, init_pose=None, max_iterations=20, tolerance=0.001)
+    matched_cluster_indices, _ = match_clusters(dst_indices, laser_a, laser_b, clusters_a, clusters_b, False)
 
     # plot
     plt.figure()
@@ -357,11 +390,11 @@ def realtime_test():
     plt.show()
 
 # if __name__ == "__main__":
-#     # 1. test icp and cluster matching with two static LaserFake
-#     #test_icp()
+    # 1. test icp and cluster matching with two static LaserFake
+    # test_icp()
 
-#     # 2. test icp and cluster matching with real lidar
-#     rospy.init_node('test_coarse_level', anonymous=True)      
-#     realtime_test()
-#     rospy.spin()
+    # # 2. test icp and cluster matching with real lidar
+    # rospy.init_node('test_coarse_level', anonymous=True)      
+    # realtime_test()
+    # rospy.spin()
     

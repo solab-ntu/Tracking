@@ -57,8 +57,8 @@ def realtime():
     clusters_prev = None
 
     # init plot
-    #vt_plt = VisualizeTracking(x, kf)
-    vt_plt = VisualizeFromCar(laser_odom, x)
+    vt_plt = VisualizeTracking(x, kf)
+    # vt_plt = VisualizeFromCar(laser_odom, x)
 
     # bagfile
     bag_duration = get_duration('/home/wuch/tracking_ws/src/Tracking/tracking_2d_lidar/bagfiles/'+bagfile+'.bag')
@@ -102,7 +102,7 @@ def realtime():
             # duration_3 = time_3 - time_2
 
             # --- 4. Coarse-level data association (ICP): update JointState.track_indices
-            CoarseLevel(laser_odom_now, laser_prev, clusters_now, clusters_prev, x, tentative_threshold=5, icp_max_dist=icp_max_dist)
+            CoarseLevel(laser_odom_now, laser_prev, clusters_now, clusters_prev, x, tentative_threshold=0, icp_max_dist=icp_max_dist)
             # time_4 = time.time()
             # duration_4 = time_4 - time_3
 
@@ -117,7 +117,8 @@ def realtime():
             #duration_5 = time_5 - time_4
             
             # --- 6. visualization
-            vt_plt.plot(laser_odom_now)
+            vt_plt.plot()
+            # vt_plt.plot(laser_odom_now)
             #time_6 = time.time()
             #duration_6 = time_6 - time_5
 

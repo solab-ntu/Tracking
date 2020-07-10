@@ -88,7 +88,7 @@ void PredictLayer::CB_obstacle(const tracking_2d_lidar::TracksArrayMsg::ConstPtr
         
 
         // original
-        double time_1 = sqrt(pow(x-robot_x_, 2.0)+pow(y-robot_y_, 2.0))/speed_ + 2.0;
+        double time_1 = sqrt(pow(x-robot_x_, 2.0)+pow(y-robot_y_, 2.0))/speed_ + 1.0;
         x1 = x0 + time_1 * msg->tracks.at(i).vx.data;
         y1 = y0 + time_1 * msg->tracks.at(i).vy.data;
 

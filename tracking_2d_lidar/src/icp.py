@@ -98,10 +98,10 @@ def icp(A, B, init_pose=None, max_iterations=20, tolerance=0.001, max_dist=1.0):
         src = np.dot(init_pose, src)
 
     prev_error = 0
-    destination_indices = None
 
     iteration_count = 0
 
+    # for iteration in range(7):
     for iteration in range(max_iterations):
         iteration_count += 1
 
@@ -112,6 +112,7 @@ def icp(A, B, init_pose=None, max_iterations=20, tolerance=0.001, max_dist=1.0):
         count = 0
         for distance in distances:
             if distance <= max_dist*2.0/(iteration + 1.0):
+            # if distance <= max_dist:
                 count += 1
 
         src_good = np.zeros((m, count))  # good means outliers removed
@@ -121,6 +122,7 @@ def icp(A, B, init_pose=None, max_iterations=20, tolerance=0.001, max_dist=1.0):
         j = 0
         for i, distance in enumerate(distances):
             if distance <= max_dist*2.0/(iteration + 1.0):
+            # if distance <= max_dist:
                 src_good[0][j] = src[0][i]
                 src_good[1][j] = src[1][i]
                 dst_indices_good[j] = dst_indices[i]
@@ -130,8 +132,6 @@ def icp(A, B, init_pose=None, max_iterations=20, tolerance=0.001, max_dist=1.0):
             #else:  # this is an outlier
                 #dst_indices[i] = -1
 
-        # save for output
-        destination_indices = dst_indices  # added by wuch
 
         dst_good = dst[:m,dst_indices_good]  
         # --- end of remove outliers
@@ -157,7 +157,11 @@ def icp(A, B, init_pose=None, max_iterations=20, tolerance=0.001, max_dist=1.0):
     #B_matched = B[dst_indices_good,:]
     
     # --- test only (easy to plot: icp point-to-point)
-    #return src_indices_good, dst_indices_good, T, distances, iteration
+    # return src_indices_good, dst_indices_good, T, distances, iteration
 
     # --- real work
-    return destination_indices, T
+    for i,dist in enumerate(distances):
+        if dist > 0.8:
+            dst_indices[i] = -1  # this is an outlier
+
+    return dst_indices

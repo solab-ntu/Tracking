@@ -94,8 +94,11 @@ class Cluster():
             int_diff_a = self.int_diff[root_a]
             int_diff_b = self.int_diff[root_b]
 
-            r_a = self.k/float(abs(self.set_arr[root_a]))  # k/set_size
-            r_b = self.k/float(abs(self.set_arr[root_b]))  # k/set_size
+            # r_a = self.k/float(abs(self.set_arr[root_a]))  # k/set_size
+            # r_b = self.k/float(abs(self.set_arr[root_b]))  # k/set_size
+
+            r_a = self.k  # k/set_size
+            r_b = self.k  # k/set_size
 
             if root_a != root_b and e < min((int_diff_a + r_a), (int_diff_b + r_b)):
                 # merge

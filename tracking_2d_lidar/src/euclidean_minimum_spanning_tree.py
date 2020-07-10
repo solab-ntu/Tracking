@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 import rospy
+from scipy.spatial import Delaunay
+import numpy as np
 
 # Kruskal's algorithm reference: http://alrightchiu.github.io/SecondRound/minimum-spanning-treekruskals-algorithm.html
 
 class EMST():
-    def __init__(self, laser, neighbor_size=10):
+    def __init__(self, laser, neighbor_size=30):
         # params settings
-        self.n_size = neighbor_size  # create_graph: neighbor size
+        self.n_size = neighbor_size  # create_graph_m_neighbor: neighbor size
 
         self.laser = laser
         
@@ -32,12 +34,23 @@ class EMST():
 
         # do methods
         #self.create_complete_graph()  # abandoned: not efficient
-        self.create_graph()
+        # self.create_graph_m_neighbor()
+        self.create_graph_delaunay()
 
         self.kruskals_mst()
 
+    def create_graph_delaunay(self):
+        points = self.laser.cartesian
+        tri = Delaunay(points)
+        for t in tri.simplices:
+            for i,j in zip((t[0],t[1],t[2]),(t[1],t[2],t[0])): 
+                vi = self.laser.cartesian[i]
+                vj = self.laser.cartesian[j]
+                euclidean_squared_edge = (vi[0] - vj[0])**2 + (vi[1] - vj[1])**2  # does not calculate squared root to make it faster
+                self.complete_graph.append((euclidean_squared_edge, i, j))
 
-    def create_graph(self):
+
+    def create_graph_m_neighbor(self):
         ''' 
         Instead of creating a complete graph, we take the advantage of sequence of laser scan. 
         We only create graph between a vertex and its (self.n_size) neighbors.

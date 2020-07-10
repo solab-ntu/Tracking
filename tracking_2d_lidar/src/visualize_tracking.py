@@ -25,15 +25,15 @@ class VisualizeTracking():
         self.ax.axis([x,w+x,y,h+y])
 
         # plot the map as background        
-        map_no_pad = map.map[map.pad_size:-map.pad_size, map.pad_size:-map.pad_size]
-        self.ax.imshow(map_no_pad, extent=[x,w+x,y,h+y], origin='lower', cmap='gray_r', vmin=0, vmax=255, interpolation='none')
+        # map_no_pad = map.map[map.pad_size:-map.pad_size, map.pad_size:-map.pad_size]
+        # self.ax.imshow(map_no_pad, extent=[x,w+x,y,h+y], origin='lower', cmap='gray_r', vmin=0, vmax=255, interpolation='none')
 
     def plot(self):
         ax_list = []
 
         for i, track in enumerate(self.x.tracks):
-            id = i
-            #id = track.id
+            # id = i
+            id = track.id
 
             # kf.x
             if track.static == 0:  # 0: dynamic, 1: static_map, 2: static object (unknown to the map)
@@ -69,7 +69,7 @@ class VisualizeTracking():
             bottom = min(track.xp[1])
             width = abs(max(track.xp[0])-left)
             height = abs(max(track.xp[1])-bottom)
-            p = plt.Rectangle((left, bottom), width, height, fill=False, edgecolor=color, linewidth=2)
+            p = plt.Rectangle((left, bottom), width, height, fill=False, edgecolor=color, linewidth=20)
             #p.set_transform(self.ax.transAxes)
             #p.set_clip_on(False)
             a = self.ax.add_patch(p)
@@ -83,6 +83,9 @@ class VisualizeTracking():
             # xp - measurements
             a = self.ax.scatter(track.xp[0], track.xp[1], s=25.0, c='k', linewidths=0)
             ax_list.append(a)
+
+
+        # plt.savefig('/home/wuch/Pictures/laser_box.png')
         
         # plot
         plt.pause(1e-12)  # pause for real time display

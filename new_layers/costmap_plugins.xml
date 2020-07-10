@@ -6,12 +6,6 @@
   </class>
 </library>
 
-<library path="lib/libstaticobstacle_layer">
-  <class type="costmap_2d::StaticobstacleLayer" base_class_type="costmap_2d::Layer">
-    <description> just a duplicate of SmartobstacleLayer</description>
-  </class>
-</library>
-
 <library path="lib/libobserve_layer">
   <class type="new_layers::ObserveLayer" base_class_type="costmap_2d::Layer">
     <description>Get ObstacleArrayMsg from costmap_converter and draw obstacles along the predicted velocity</description>

@@ -4,6 +4,8 @@ from filterpy.kalman import KalmanFilter
 from filterpy.common import Q_discrete_white_noise, Q_continuous_white_noise
 from scipy.linalg import block_diag
 
+from publish_path_object import PubPath
+
 class State:
     def __init__(self, rate, use_displacement = False):  # use_displacement is deprecated
         # rate
@@ -22,7 +24,15 @@ class State:
         self.var_bearing = 1.579e-4
 
     def append(self, cluster, laser_now):
-        t = Track(self.use_displacement)
+        # id
+        max_id = 0
+        for track in self.tracks:
+            if track.id > max_id:
+                max_id = track.id 
+        the_id = max_id + 1
+
+        t = Track(self.use_displacement, the_id)
+
         # xp
         x_i = laser_now.cartesian[cluster,0]
         y_i = laser_now.cartesian[cluster,1]
@@ -38,12 +48,6 @@ class State:
         # xt_counter
         t.counter = 1  # count start from 1
 
-        # id
-        max_id = 0
-        for track in self.tracks:
-            if track.id > max_id:
-                max_id = track.id 
-        t.id = max_id + 1
 
         # kf
         dt = self.dt
@@ -88,7 +92,7 @@ class State:
         self.tracks.append(t)
 
     def remove(self, indices_new):
-        ''' Remove those tracks that their indices are "not" in indices_new.
+        ''' Remove those tracks that their indices are "not" in indices_new. And updated the track_indices_new (indexed by clusters)
         Input:
             indices_new: new track indices that cluster_now corresponds to.
         Output:
@@ -120,7 +124,7 @@ class State:
 
 
 class Track:
-    def __init__(self, use_displacement):       
+    def __init__(self, use_displacement, the_id):       
         '''
         xp: measured position at every instant. updated without kalman filter.
         xt: np.array([[0],      # x: np.mean(xp[0]) updated without kalman filter
@@ -136,7 +140,7 @@ class Track:
         self.xp = None
         self.xt = None
         self.counter = None  # -1: already mature
-        self.id = None  # the id will not change for the same track (test only)
+        self.id = the_id  # the id will not change for the same track
         self.static = 0  # 0: dynamic, 1: static_map, 2: static object (unknown to the map)
 
         self.displacement = np.array([0., 0.])  # avg. displacement from point to point
@@ -154,7 +158,6 @@ class Track:
 
         # for test
         self.chi = None
-
 
 
     

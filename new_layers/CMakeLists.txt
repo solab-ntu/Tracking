@@ -165,10 +165,6 @@ add_library(smartobstacle_layer
   src/smartobstacle_layer.cpp
 )
 
-add_library(staticobstacle_layer
-  src/staticobstacle_layer.cpp
-)
-
 add_library(observe_layer
   src/observe_layer.cpp
 )

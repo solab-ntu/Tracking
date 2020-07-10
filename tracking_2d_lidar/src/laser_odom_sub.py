@@ -44,7 +44,7 @@ class LaserOdomSub():
         
         # subscriber
         if use_amcl:
-            rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, self.amcl_callback)  # use amcl localization as odom
+            rospy.Subscriber("/robot_pose", PoseWithCovarianceStamped, self.amcl_callback)  # use amcl localization as odom
         else:
             rospy.Subscriber("/odom", Odometry, self.odom_callback)
         
